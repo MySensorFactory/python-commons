@@ -10,7 +10,7 @@ phases:
             python: 3.11
         commands:
             - apt update -y
-            - apt install twine
+            - apt install twine -y
             - pip3 install wheel
     pre_build:
         commands:
