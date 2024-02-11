@@ -1,0 +1,34 @@
+version: 0.2
+
+env:
+    variables:
+        PROJECT_NAME: python-commons
+
+phases: 
+    install:
+        runtime-versions:
+            python: 3.11
+        commands:
+            - apt update -y
+            - apt install twine
+            - pip3 install wheel
+    pre_build:
+        commands:
+            - echo "Pre build commands ..."
+            - export TWINE_USERNAME=aws
+            - export TWINE_PASSWORD=`aws codeartifact get-authorization-token --domain factory --domain-owner 781648067507 --region eu-central-1 --query authorizationToken --output text`
+            - export TWINE_REPOSITORY_URL=`aws codeartifact get-repository-endpoint --domain factory --domain-owner 781648067507 --repository FactoryRepository --format pypi --query repositoryEndpoint --output text`
+    build:
+        commands:
+            - echo "Building python package ..."
+            - python3 setup.py bdist_wheel --universal
+    post_build:
+        commands:
+            - echo "Uploading python package  ..."
+            - twine upload --repository codeartifact  dist/*
+cache:
+    paths:
+        - '/root/.m2/**/*'
+        - '/root/.npm/**/*'
+        - '/root/.pip-cache/**/*'
+        - '/root/.docker/**'

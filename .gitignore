@@ -1,0 +1,5 @@
+build
+dist
+python_commons.egg-info
+pythoncommons.egg-info
+.idea
